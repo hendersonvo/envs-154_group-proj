@@ -1,0 +1,72 @@
+---
+title: "envs 154 viz"
+format: pdf
+---
+# Set up
+
+## Packages
+```{r}
+#| label: packages
+
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+## Data
+
+```{r}
+all_veg <- read_csv(here("data", "all_veg_spatialJoin_table.csv"))
+veg_clean <- all_veg |> 
+  clean_names() |> 
+  rename(dist_trail = distanc_feat1_12_13_14_15_16_17_18_19_20_21_22_23_24_25_26_27_28_29_30) |> 
+  rename(hfp = reclass_hfp_12_13_14_15_16_17_18_19) |> 
+  select(target_fid, native, code, dist_trail, hfp) |> 
+  mutate(native_fct = case_when(
+    native == 0 ~ "non-native",
+    native == 1 ~ "native"
+  ))
+
+nps_veg <- read_csv(here("data", "all_veg_spatialJoin_npsTable.csv"))
+nps_clean <- nps_veg |> 
+  clean_names() |> 
+  rename(dist_trail = distanc_feat1_12_13_14_15_16_17_18_19_20_21_22_23_24_25_26_27_28_29_30_31_32_33_34_35) |> 
+  rename(hfp = reclass_hfp_12_13_14_15_16_17_18_19_20_21_22_23_24 ) |> 
+  select(target_fid, native, code, dist_trail, hfp) |> 
+  mutate(native_fct = case_when(
+    native == 0 ~ "non-native",
+    native == 1 ~ "native"
+  ))
+```
+
+# Visualization
+
+```{r}
+ggplot(data = veg_clean,
+       aes(x = native_fct,
+           y = dist_trail)) +
+  geom_boxplot()
+```
+
+```{r}
+# create new object from clean veg data
+veg_sample <- veg_clean |> 
+  # group by native status
+  group_by(native) |> 
+  # randomly select 800 observations for each native status
+  slice_sample(n = 800)
+```
+
+```{r}
+ggplot(data = veg_sample,
+       aes(x = native_fct,
+           y = dist_trail)) +
+  geom_boxplot()
+```
+
+```{r}
+ggplot(data = nps_clean,
+       aes(x = native_fct,
+           y = dist_trail)) +
+  geom_boxplot()
+```
