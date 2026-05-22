@@ -68,5 +68,8 @@ ggplot(data = veg_sample,
 ggplot(data = nps_clean,
        aes(x = native_fct,
            y = dist_trail)) +
-  geom_boxplot()
+  geom_boxplot() +
+  labs(x = "Native status",
+       y = "Distance from trail (m)",
+       title = "Native plants are distributed closer to trails than non-natives")
 ```
